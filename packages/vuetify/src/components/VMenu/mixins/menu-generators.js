@@ -3,12 +3,12 @@ export default {
   methods: {
     genActivator () {
       if (!this.$slots.activator) return null
+      if (this.disabled) return this.$slots.activator
 
       const options = {
         staticClass: 'v-menu__activator',
         'class': {
-          'v-menu__activator--active': this.hasJustFocused || this.isActive,
-          'v-menu__activator--disabled': this.disabled
+          'v-menu__activator--active': this.hasJustFocused || this.isActive
         },
         ref: 'activator',
         on: {}

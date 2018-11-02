@@ -69,10 +69,6 @@ exports[`VMenu.js should render component with custom closeOnContentClick and ma
 exports[`VMenu.js should render component with custom disabled and match snapshot 1`] = `
 
 <div class="v-menu">
-  <div class="v-menu__content theme--light "
-       style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; z-index: 0; display: none;"
-  >
-  </div>
 </div>
 
 `;

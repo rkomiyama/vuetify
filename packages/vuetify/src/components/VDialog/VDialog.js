@@ -145,6 +145,75 @@ export default {
       // Since this should only be called in a capture event (bottom up), we shouldn't need to stop propagation
       return getZIndex(this.$refs.content) >= this.getMaxZIndex()
     },
+    genActivator () {
+      if (!this.$slots.activator) return null
+      if (this.disabled) return this.$slots.activator
+
+      return this.$createElement('div', {
+        staticClass: 'v-dialog__activator',
+        on: {
+          click: e => {
+            e.stopPropagation()
+            this.isActive = !this.isActive
+          }
+        }
+      }, [this.$slots.activator])
+    },
+    genContent () {
+      const data = {
+        'class': this.classes,
+        ref: 'dialog',
+        directives: [
+          {
+            name: 'click-outside',
+            value: () => (this.isActive = false),
+            args: {
+              closeConditional: this.closeConditional,
+              include: this.getOpenDependentElements
+            }
+          },
+          { name: 'show', value: this.isActive }
+        ],
+        on: {
+          click: e => { e.stopPropagation() }
+        }
+      }
+
+      if (!this.fullscreen) {
+        data.style = {
+          maxWidth: this.maxWidth === 'none' ? undefined : convertToUnit(this.maxWidth),
+          width: this.width === 'auto' ? undefined : convertToUnit(this.width)
+        }
+      }
+
+      let dialog = this.$createElement('div', data, this.showLazyContent(this.$slots.default))
+      if (this.transition) {
+        dialog = this.$createElement('transition', {
+          props: {
+            name: this.transition,
+            origin: this.origin
+          }
+        }, [dialog])
+      }
+
+      return this.$createElement('div', {
+        'class': this.contentClasses,
+        attrs: {
+          tabIndex: '-1',
+          ...this.getScopeIdAttrs()
+        },
+        style: { zIndex: this.activeZIndex },
+        ref: 'content'
+      }, [
+        this.$createElement(ThemeProvider, {
+          props: {
+            root: true,
+            light: this.light,
+            dark: this.dark
+          }
+        }, [dialog])
+      ])
+    },
     hideScroll () {
       if (this.fullscreen) {
         document.documentElement.classList.add('overflow-y-hidden')
@@ -170,81 +239,14 @@ export default {
   },
 
   render (h) {
-    const children = []
-    const data = {
-      'class': this.classes,
-      ref: 'dialog',
-      directives: [
-        {
-          name: 'click-outside',
-          value: () => (this.isActive = false),
-          args: {
-            closeConditional: this.closeConditional,
-            include: this.getOpenDependentElements
-          }
-        },
-        { name: 'show', value: this.isActive }
-      ],
-      on: {
-        click: e => { e.stopPropagation() }
-      }
-    }
-
-    if (!this.fullscreen) {
-      data.style = {
-        maxWidth: this.maxWidth === 'none' ? undefined : convertToUnit(this.maxWidth),
-        width: this.width === 'auto' ? undefined : convertToUnit(this.width)
-      }
-    }
-
-    if (this.$slots.activator) {
-      children.push(h('div', {
-        staticClass: 'v-dialog__activator',
-        'class': {
-          'v-dialog__activator--disabled': this.disabled
-        },
-        on: {
-          click: e => {
-            e.stopPropagation()
-            if (!this.disabled) this.isActive = !this.isActive
-          }
-        }
-      }, [this.$slots.activator]))
-    }
-
-    let dialog = h('div', data, this.showLazyContent(this.$slots.default))
-    if (this.transition) {
-      dialog = h('transition', {
-        props: {
-          name: this.transition,
-          origin: this.origin
-        }
-      }, [dialog])
-    }
-
-    children.push(h('div', {
-      'class': this.contentClasses,
-      attrs: {
-        tabIndex: '-1',
-        ...this.getScopeIdAttrs()
-      },
-      style: { zIndex: this.activeZIndex },
-      ref: 'content'
-    }, [
-      this.$createElement(ThemeProvider, {
-        props: {
-          root: true,
-          light: this.light,
-          dark: this.dark
-        }
-      }, [dialog])
-    ]))
-
     return h('div', {
       staticClass: 'v-dialog__container',
       style: {
         display: (!this.$slots.activator || this.fullWidth) ? 'block' : 'inline-block'
       }
-    }, children)
+    }, [
+      this.genActivator(),
+      this.disabled ? null : this.genContent()
+    ])
   }
 }

@@ -17,7 +17,6 @@ test('VDialog.js', ({ mount, compileToFunctions }) => {
     })
 
     expect(wrapper.html()).toMatchSnapshot()
-    expect('Unable to locate target [data-app]').toHaveBeenTipped()
   })
 
   it('should render a persistent component and match snapshot', () => {
@@ -140,12 +139,7 @@ test('VDialog.js', ({ mount, compileToFunctions }) => {
     wrapper.vm.$on('input', input)
 
     expect(wrapper.vm.isActive).toBe(false)
-    wrapper.find('.v-dialog__activator')[0].trigger('click')
-    expect(wrapper.vm.isActive).toBe(false)
-    await wrapper.vm.$nextTick()
-    expect(input).not.toBeCalled()
-
-    expect('Unable to locate target [data-app]').toHaveBeenTipped()
+    expect(wrapper.find('.v-dialog__activator')).toHaveLength(0)
   })
 
   it('not change state on v-model update', async () => {

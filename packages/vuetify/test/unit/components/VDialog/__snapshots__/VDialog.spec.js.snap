@@ -5,15 +5,6 @@ exports[`VDialog.js should render a disabled component and match snapshot 1`] = 
 <div class="v-dialog__container"
      style="display: block;"
 >
-  <div tabindex="-1"
-       class="v-dialog__content"
-       style="z-index: 0;"
-  >
-    <div class="v-dialog"
-         style="display: none;"
-    >
-    </div>
-  </div>
 </div>
 
 `;

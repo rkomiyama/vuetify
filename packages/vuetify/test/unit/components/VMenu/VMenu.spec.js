@@ -125,7 +125,6 @@ test('VMenu.js', ({ mount }) => {
     })
 
     expect(wrapper.html()).toMatchSnapshot()
-    expect('Unable to locate target [data-app]').toHaveBeenTipped()
   })
 
   it('should render component with custom maxHeight and match snapshot', () => {

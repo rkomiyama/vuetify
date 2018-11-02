@@ -214,7 +214,7 @@ export default Vue.extend({
 
     return h('div', data, [
       this.genActivator(),
-      this.$createElement(ThemeProvider, {
+      this.disabled ? null : this.$createElement(ThemeProvider, {
         props: {
           root: true,
           light: this.light,
