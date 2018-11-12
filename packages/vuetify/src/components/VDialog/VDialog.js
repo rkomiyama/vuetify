@@ -160,6 +160,8 @@ export default {
       }, [this.$slots.activator])
     },
     genContent () {
+      if (this.disabled) return null
+
       const data = {
         'class': this.classes,
         ref: 'dialog',
@@ -246,7 +248,7 @@ export default {
       }
     }, [
       this.genActivator(),
-      this.disabled ? null : this.genContent()
+      this.genContent()
     ])
   }
 }
