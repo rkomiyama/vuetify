@@ -262,4 +262,26 @@ describe('VDialog.ts', () => {
     expect(wrapper2.element.style.display).toBe('inline-block')
     expect(dialog.vm.hasActivator).toBe(true)
   })
+
+  // https://github.com/vuetifyjs/vuetify/issues/5533
+  it('should emit click:outside', async () => {
+    const input = jest.fn()
+    const clickOutside = jest.fn()
+    const wrapper = mountFunction({
+      slots: {
+        activator: ['<span>activator</span>']
+      }
+    })
+
+    wrapper.vm.$on('input', input)
+    wrapper.vm.$on('click:outside', clickOutside)
+
+    expect(wrapper.vm.isActive).toBe(false)
+    wrapper.find('.v-dialog__activator').trigger('click')
+    expect(wrapper.vm.isActive).toBe(true)
+    await wrapper.vm.$nextTick()
+    expect(input).toHaveBeenCalledWith(true)
+    wrapper.vm.closeConditional(new Event('click'))
+    expect(clickOutside).toHaveBeenCalled()
+  })
 })
